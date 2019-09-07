@@ -26,3 +26,8 @@ _
 	
 		- [Scalable Walkability Analysis of Melbourne](https://github.com/sajal2692/Scalable-Walkability-Analysis-of-Melbourne):
 		
+		
+		
+		
+	- __R__
+		- [Recruit Holdings- Shiny R application](https://github.com/Ntaralkar/Restaurant-Analysis): This shiny application shows data analysis for Recruitment Holdings company. The Shiny app allows user can view customers and stores in the application and navigate numbers in total level, at store level and region level.
