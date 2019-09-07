@@ -13,3 +13,9 @@ _
 	- [Predicting Boston Housing Prices](https://github.com/Ntaralkar/Data_Science_Portfolio/blob/master/Boston_Housing_Analysis/Boston_housing_analysis.ipynb): A model to predict the value of a given house in the Boston real estate market using various statistical analysis tools. Identified the best price that a client can sell their house utilizing machine learning.
 	- [Supervised Learning: Graduate Admissions (Regression & Classification)](https://github.com/Ntaralkar/Data_Science_Portfolio/blob/master/Graduate_Admissions/Graduate%20Admission.ipynb): Built different supervised machine learning models demostrating the parameters that are important during the application for Masters Programs. Regression models to predict the chances of candidates for a particular university.
 	
+
+
+- ### Natural Language Processing
+- [3-way Sentiment Analysis for Tweets](https://github.com/sajal2692/data-science-portfolio/blob/master/3-Way%20Sentiment%20Analysis%20for%20Tweets.ipynb): 3-way polarity (positive, negative, neutral) classification system for tweets, without using NLTK's sentiment analysis engine.
+
+- [Generate Sparse representations using tockenisation](https://github.com/Ntaralkar/data_science_portfolio/tree/master/Sentiment%20Analysis):The aim of this task is to build sparse representations for the meeting transcripts generated in task 1, which includes word tokenization, vocabulary generation, and the generation of sparse representations.
