@@ -24,5 +24,5 @@ _
 - ### Data Analysis and Visualisation
 	- __Python__
 	
-	- [Scalable Walkability Analysis of Melbourne](https://github.com/sajal2692/Scalable-Walkability-Analysis-of-Melbourne):
+		- [Scalable Walkability Analysis of Melbourne](https://github.com/sajal2692/Scalable-Walkability-Analysis-of-Melbourne):
 		
