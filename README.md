@@ -25,6 +25,8 @@ _
 		- [Melbourne Housing](https://github.com/Ntaralkar/Melbourne-Housing/blob/master/Housing%20Analysis.ipynb): BUilt supervised machine learning models to demonstrate which suburbs are best to live in and exploratory analysis that shows various factors that influence your decision of buying a house.
 		
 		- [Twitter US Airline Sentiment Analysis](https://github.com/Ntaralkar/data_science_portfolio/blob/master/Twitter%20US%20Airline%20Sentiment/Twitter_US_Airline_Sentiment_Analysis.ipynb): A sentiment analysis job about the problems of each major U.S. airline. Twitter data scraped from February of 2015 and classified into positive, negative, and neutral tweets, followed by categorizing negative reasons (such as "late flight" or "rude service").
+		
+		-[PDF data extraction](): This project comprises the execution of pdf data processing and analysis tasks applied to documents in PDF format. This task focuses on converting the health in an PDF file ("health.pdf") into a csv file. Moreover, it mainly focuses on extracting the pdf data, rearranging the data in more redable format and converting it into csv file for further analysis.
 				
 		
 		
