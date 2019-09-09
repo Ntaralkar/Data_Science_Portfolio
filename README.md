@@ -31,3 +31,5 @@ _
 		
 	- __R__
 		- [Recruit Holdings- Shiny R application](https://github.com/Ntaralkar/Restaurant-Analysis): This shiny application shows data analysis for Recruitment Holdings company. The Shiny app allows user can view customers and stores in the application and navigate numbers in total level, at store level and region level.
+		
+		- [Machine learning Regression models](https://github.com/Ntaralkar/data_science_portfolio/blob/master/Regression_models_in_R/FIT5197_Assignment2_Report.pdf): Used machine learning alogirthm to predict miles per gallon, income and perform sampling on the given datasets. The task was to impute missing values, perform exploratory analysis and use regression models (Linear and Logistic regression) to predict the outcome.
