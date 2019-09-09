@@ -1,0 +1,504 @@
+---
+title: "FIT5197 2018 S1 Assignment 2"
+author: "Nikhil Taralkar, 28980433"
+date: "17 May 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Task A
+
+Build a linear regression model using the specific "auto mpg train.csv" provided
+with the assignment to predict mpg (mile per gallon). The second file
+"auto mpg test.csv"will be used for evaluation.
+
+
+A.1: There are some missing values listed as "?". Describe your strategy for
+treating missing values and update (edit by hand) the file accordingly.
+
+I have replaced "?" values with mean value of horsepower.
+
+
+
+```{r}
+
+library(Metrics)
+library(caret)
+mpg_data <- read.csv('auto_mpg_train.csv')
+head(mpg_data)
+
+
+# creating dataframe
+df <- data.frame(mpg_data)
+
+```
+A.2: Pair plot mpg vs. the other variables to visualize the relationships and
+discuss what you see.
+
+```{r }
+
+# pair plot for auto mpg train dataset
+
+pairs(df, panel = panel.smooth, main="Figure 1: Pairs Plot for MPG")
+
+```
+
+A.3: Based on your pair plots, propose an initial set of variables to use for
+a multiple linear regression model to predict mpg.
+
+```{r}
+
+
+# correlation between different columns in mpg train dataset
+cor(df[,1:8])
+
+#Initial set of variables used for multiple Linear regression model to predict mpg
+
+model <- lm(formula = mpg ~ cylinders  + weight + displacement + horsepower, data=mpg_data)
+
+
+```
+A.4: With variables of your choice build the model using the lm() routine in
+R, and then print the summary of the model to get the R diagnostics.
+Briefly explain the statistics in the summary, e.g. R2 value, t-value,
+standard error, p-value (ignoring the F-statistics line). What does this
+imply about the predictors for your model?
+
+
+```{r}
+
+
+model <- lm(formula = mpg ~ cylinders  + weight + displacement + horsepower, data=mpg_data)
+summary(model)
+
+```
+
+
+A.5: Test the fitted model using the "auto mpg test.csv", and calculate the
+MSE on the test set, reporting it. Note the test set has no missing
+values.
+
+```{r}
+
+auto_data <- read.csv('auto_mpg_test.csv')
+
+# predicting values for mpg
+model_prediction <- predict(model, auto_data)
+model_prediction
+
+
+```
+
+Calculating MSE
+
+```{r}
+#importing library
+library(Metrics)
+
+# calculating MSE value
+mse(model_prediction, auto_data$mpg)
+
+
+```
+
+A.6: Can you improve your model with different predictors? Try out some
+different ratios or products of the better predictor variables. How
+will you evaluate the different alternative predictors on your existing
+model (not using the test set)? Evaluate them and suggest which
+single predictor you would like to add (or none, if it looks like none
+would improve it). If you suggest adding a single predictor, then add
+it and repeat step A.5 to evalute it on the test set.
+
+```{r}
+
+model1 <- lm(formula = mpg ~ cylinders  + weight + displacement + horsepower + model.year, data=mpg_data)
+summary(model1)
+
+model1_pred <- predict(model1, auto_data)
+
+mse(model1_pred, auto_data$mpg)
+
+```
+```{r}
+
+model2 <- lm(formula = mpg ~ cylinders  + origin + displacement + weight + model.year, data=mpg_data)
+summary(model2)
+
+model2_pred <- predict(model2, auto_data)
+
+mse(model2_pred, auto_data$mpg)
+
+
+#final best predictor
+model3 <- lm(formula = mpg ~ origin + weight + model.year, data=mpg_data)
+summary(model3)
+
+model3_pred <- predict(model3, auto_data)
+
+mse(model3_pred, auto_data$mpg)
+
+```
+
+
+
+## Task B: Logistic Regression
+
+Build a logistic regression model using the specific "adult income train.csv"
+provided with the Assignment to predict the income variable. The second
+file "adult income test.csv"will be used for evaluation.
+
+
+### Task B.1
+
+B.1: There are some missing values listed as "?". Describe your strategy for
+treating missing values, but note sometimes it is OK to leave missing
+value as a separate categorical value (we call this "missing informative").
+Note there are too many to edit by hand, so if you wish to
+modify them, identify them with a Boolean test like
+data$workclass[id]=='?'
+and modify the values in a loop.
+
+```{r}
+income_data_train <- read.csv('adult_income_train.csv', stringsAsFactors = FALSE)
+#income_data_train
+# Replacing "?" values in the dataset with 'Non-specified'
+
+income_data_train$occupation[which (income_data_train$occupation == '?')] <- 'Non-specified'
+income_data_train$workclass[which (income_data_train$workclass == '?')] <- 'Non-specified'
+income_data_train$native_country[which (income_data_train$native_country == '?')] <- 'Non-specified'
+
+income_data_train$occupation = as.factor(income_data_train$occupation)
+income_data_train$workclass = as.factor(income_data_train$workclass)
+income_data_train$native_country = as.factor(income_data_train$native_country)
+income_data_train$income = as.factor(income_data_train$income)
+
+#glm - logistic regression
+logistic_model <- glm(income ~ .,family = binomial, data = income_data_train)
+summary(logistic_model)
+
+# reading test csv file
+income_test_data <- read.csv('adult_income_test.csv')
+income_test_data$income = as.factor(income_test_data$income)
+
+# prediction for income
+prediction_value <- predict(logistic_model, income_test_data, type="response")
+prediction_new <- ifelse(prediction_value > 0.5, 1, 0) # if predicted values > 0.5 assign 1, else 0
+prediction_new <- factor(prediction_new) #setting factors level
+
+# Assigning values 0 and 1 for income categorical value
+income_test_data$income <- ifelse(income_test_data$income == '>50K', 1, 0) 
+income_test_data$income <- factor(income_test_data$income, level = c(0, 1))
+
+# confusion matrix for predicted and actual data
+#c = confusionMatrix(income_test_data$income, prediction_new)
+# confusion Matrix
+conf <- as.matrix(table(income_test_data$income, prediction_new))
+conf
+
+confusionMatrix(income_test_data$income, prediction_new)
+
+# finding Accuracy
+N <- nrow(income_test_data) #Number of Observations
+diag <- diag(conf)  #TN and TP
+Accuracy <- sum(diag)/N #Accuracy = (TP + TN)/N
+round(Accuracy*100,2)
+
+#Distribution of instances over the actual and predicted classes:
+
+rowsums = apply(conf, 1, sum) #Number of observations per class
+colsums = apply(conf, 2, sum) #Number of predictions per class
+Actual.Dist = rowsums / N #Distribution of observations over the actual classes
+Predicted.Dist= colsums / N #Distribution of observations over the predicted classes
+round(data.frame(Actual.Dist,Predicted.Dist)*100,2)
+
+#Since the Predicted.Dist is larger than Actual.Dist for type=1, we can conclude that the model is
+#more biased towards the class 1 i.e. predicting income >50K.
+
+Precision = diag / colsums
+Recall = diag / rowsums
+F1 = 2 * Precision * Recall / (Precision + Recall)
+round(data.frame(Precision, Recall, F1, Actual.Dist, Predicted.Dist)*100,2)
+
+
+
+```
+
+B.4: Can you improve your model with different predictors? For instance,
+you might reconstruct the categorical features to only include significant
+values and then have an "other" value that groups together all
+non-significant ones. Perhaps the best way to do this is to create a
+new data frame with your modified attributes and build the model on
+that using the R construct "income???." Report the R diagnostics and
+the confusion matrix and other scores on the test set (as per B.3) for
+the new model and comment on the difference.
+```{r}
+
+# new data frame for training dataset
+train_data <- income_data_train
+
+
+#printing logistic model to understand about the significant values
+summary(logistic_model)
+
+#since, the grouping does not work on the factor levels, I have converted the columns back to their original datatype. For e.g. workclass was changed to character dataype and then grouped into others category for "Never-worked" and "withpout-pay" values which are non-significant.Similar logic is applied for rest of the columns.
+
+#converting non-significant values to others
+train_data$workclass <- as.character(train_data$workclass)
+train_data$workclass <- ifelse(train_data$workclass %in% c("Never-worked", "Without-pay"),"Others", train_data$workclass)
+train_data$workclass <- as.factor(train_data$workclass)
+
+train_data$education <- as.character(train_data$education)
+train_data$education <- ifelse(train_data$education %in% c("11th", "Preschool", "1st-4th", "5th-6th", "9th"),"Others", train_data$education)
+#train_data$education <- as.factor(train_data$education)
+
+
+train_data$marital_status <- as.character(train_data$marital_status)
+train_data$marital_status <- ifelse(train_data$marital_status %in% c("Married-spouse-absent", "Widowed", "Separated"),"Others", train_data$marital_status)
+#train_data$marital_status <- as.factor(train_data$marital_status)
+
+train_data$occupation <- as.character(train_data$occupation)
+train_data$occupation <- ifelse(train_data$occupation %in% c("Armed-Forces", "Craft-repair", "Transport-moving"),"Others", train_data$occupation)
+#train_data$occupation <- as.factor(train_data$occupation)
+
+#train_data$relationship <- ifelse(train_data$relationship %in% c("Unmarried"),"Others", train_data$relationship)
+#train_data$relationship <- as.factor(train_data$relationship)
+#train_data$race <- ifelse(train_data$race %in% c("Other"),"Others", train_data$race)
+#train_data$race <- as.factor(train_data$race)
+
+train_data$relationship <- as.character(train_data$relationship)
+train_data$relationship <- replace(train_data$relationship, train_data$relationship=="Unmarried" ,"Other")
+train_data$relationship <- as.factor(train_data$relationship)
+
+#test_data$race <- ifelse(test_data$race %in% c("Other"),"Others", test_data$race)
+train_data$race <- as.character(train_data$race)
+train_data$race <- replace(train_data$race, train_data$race=="Other" ,"Other")
+train_data$race <- as.factor(train_data$race)
+
+train_data$native_country <- as.character(train_data$native_country)
+train_data$native_country <- ifelse(train_data$native_country %in% c("United-States", "Puerto-Rico", "Scotland", "England","Portugal","Cuba", "Germany", "Philippines", "Poland", "Canada","Yugoslavia", "France", "Taiwan", "Greece","Ecuador", "Guatemala"),"Others", train_data$native_country)
+train_data$native_country <- as.factor(train_data$native_country)
+
+
+str(train_data)
+# creating new logistic model for training dataset with significant values
+
+logistic_model_train <- glm(income ~ ., family = binomial, data = train_data)
+summary(logistic_model_train)
+
+#prediction of income
+train_prediction = predict(logistic_model_train, newdata=train_data, type='response')
+
+str(train_prediction)
+# NOw doing for Test dataset
+
+income_test_data$workclass <- as.character(income_test_data$workclass)
+income_test_data$workclass <- ifelse(income_test_data$workclass %in% c("Never-worked", "Without-pay"),"Others", income_test_data$workclass)
+#income_test_data$workclass <- as.factor(income_test_data$workclass)
+
+income_test_data$education <- as.character(income_test_data$education)
+income_test_data$education <- ifelse(income_test_data$education %in% c("11th", "Preschool", "1st-4th", "5th-6th", "9th"),"Others", income_test_data$education)
+#income_test_data$education <- as.factor(income_test_data$education)
+
+income_test_data$marital_status <- as.character(income_test_data$marital_status)
+income_test_data$marital_status <- ifelse(income_test_data$marital_status %in% c("Married-spouse-absent", "Widowed", "Separated"),"Others", income_test_data$marital_status)
+#income_test_data$marital_status <- as.factor(income_test_data$marital_status)
+
+income_test_data$occupation <- as.character(income_test_data$occupation)
+income_test_data$occupation <- ifelse(income_test_data$occupation %in% c("Armed-Forces", "Craft-repair", "Transport-moving"),"Others", income_test_data$occupation)
+#income_test_data$occupation <- as.factor(income_test_data$occupation)
+
+#income_test_data$relationship <- ifelse(income_test_data$relationship %in% c("Unmarried"),"Others", income_test_data$relationship)
+
+income_test_data$relationship <- as.character(income_test_data$relationship)
+income_test_data$relationship <- replace(income_test_data$relationship, income_test_data$relationship=="Unmarried" ,"Other")
+#income_test_data$relationship <- as.factor(income_test_data$relationship)
+
+#test_data$race <- ifelse(test_data$race %in% c("Other"),"Others", test_data$race)
+income_test_data$race <- as.character(income_test_data$race)
+income_test_data$race <- replace(income_test_data$race, income_test_data$race=="Other" ,"Other")
+#income_test_data$race <- as.factor(income_test_data$race)
+
+income_test_data$native_country <- as.character(income_test_data$native_country)
+income_test_data$native_country <- ifelse(income_test_data$native_country %in% c("United-States", "Puerto-Rico", "Scotland", "England","Portugal","Cuba", "Germany", "Philippines", "Poland", "Canada","Yugoslavia", "France", "Taiwan", "Greece","Ecuador", "Guatemala"),"Others", income_test_data$native_country)
+#income_test_data$native_country <- as.factor(income_test_data$native_country)
+
+#prediction oon test dataset
+test_prediction = predict(logistic_model_train, newdata=income_test_data, type='response')
+
+
+#setting levels for prediction values
+prediction_new_value <- ifelse(test_prediction > 0.5, 1, 0)
+prediction_new_value <- factor(prediction_new_value)
+
+# setting levels for income column
+#income_test_data$income <- ifelse(income_test_data$income == '>50K', 1, 0)
+income_test_data$income <- factor(income_test_data$income, level = c(0, 1))
+
+
+# confusion Matrix
+conf_matrix <- as.matrix(table(income_test_data$income, prediction_new_value))
+conf_matrix
+
+confusionMatrix(income_test_data$income, prediction_new_value)
+
+N <- nrow(income_test_data)
+diag <- diag(conf_matrix)
+Accuracy <- sum(diag)/N 
+round(Accuracy*100,2)
+
+
+#Distribution of instances over the actual and predicted classes:
+
+rowsums = apply(conf_matrix, 1, sum) #Number of observations per class
+colsums = apply(conf_matrix, 2, sum) #Number of predictions per class
+Actual.Dist = rowsums / N #Distribution of observations over the actual classes
+Predicted.Dist= colsums / N #Distribution of observations over the predicted classes
+round(data.frame(Actual.Dist,Predicted.Dist)*100,2)
+
+#Since the Predicted.Dist is larger than Actual.Dist for type=1, we can conclude that the model is
+#more biased towards the class 1 i.e. predicting income >50K.
+
+Precision = diag / colsums
+Recall = diag / rowsums
+F1 = 2 * Precision * Recall / (Precision + Recall)
+round(data.frame(Precision, Recall, F1, Actual.Dist, Predicted.Dist)*100,2)
+
+
+```
+## Task C: Sampling
+C1.
+First write a sampling
+algorithm that uses the rejection method (for either one of the versions
+p(x|ë) above). In your report describe how this was designed. Define
+this in R, sample 1000 values and histogram them
+```{r}
+#function to obtain y-value
+df_1 <- data.frame()
+for(x in seq(from=0, to=2, by=0.01))
+{
+  lambda = 1.5
+  px <- (lambda * exp (-(lambda) * x)) / (1 - exp (-(2) * lambda))
+
+  df <- data.frame(px) 
+  df_1 <- rbind(df_1, df)
+}
+
+print(max(df_1))
+
+```
+
+```{r}
+#Lambda value given
+lambda = 1.5
+
+# Rejection sampling function 
+sample_function1 <- function () 
+{
+  repeat {
+    x <- runif(1, 0, 2)
+    y <- runif(1, 0, 1.578)
+    px <- (lambda * exp (-(lambda) * x)) / (1 - exp (-(2) * lambda))
+    if (y < px) 
+      return (x)
+  }
+}
+#function for 1000 samples
+sample_function2 <- function (n) {
+  samples <- vector("numeric", n)
+  for (i in 1:n) {
+    samples[i] <- sample_function1()
+  }
+  return (samples)
+}
+
+
+rejection_sample <- sample_function2(1000)
+
+#histogram for Rejection samples
+hist (rejection_sample,
+      main = "Rejection sampling of 1000 values",
+      xlab = "X",
+      col = "grey")
+
+```
+C.2: Second write a sampling algorithm that uses the inverse sampling
+method (for either one of the versions p(x|ë) above). In your report
+describe how this was designed. Define this in R, sample 1000 values
+and histogram them.
+
+```{r}
+#inverse CDF function
+samples <- 1000
+x <- runif(samples)
+y <- -log(1-x)/lambda
+
+#histogram plot for the inverse sampling function with curve.
+hist(y, freq = F, xlab = "X", main = "Inverse sampling of 1000 samples")
+curve(dexp(x, rate = 2),0, 3, lwd = 2, xlab = "", ylab = "", add = T)
+
+
+```
+
+C.3 The simple Bayesian network of Figure 1 has the joint probability
+distribution
+p(cloudy)p(rain|cloudy)p(sprinkler|cloudy)p(wetgrass|sprinkler, rain)
+Use this to write a Gibbs Monte-Carlo sampler for the distribution.
+Run the sampler for 1000 cycles, throwing away the first 100 samples,
+and record counts for the two tables of
+p(wetgrass, cloudy) p(sprinkler, rain)
+Convert the counts to probabilities and report them
+
+
+```{r}
+
+#creating empty vectors for each subclass
+cloudy <- vector()
+sprinkler <- vector()
+rain <- vector()
+wetgrass <- vector()
+
+#
+for (i in 1:1000) {
+  r <- round(runif (4, 0, 1), 2)
+  
+  #condition for Cloud
+  cloudy_values <- ifelse (r[1] <= 0.5, 0, 1)
+  cloudy <- c(cloudy, cloudy_values)
+  
+  #join probability condition for Sprinklers
+  sprinkler_values <- ifelse (r[1] <= 0.5, ifelse(r[2] <= 0.5, 0, 1), ifelse(r[2] <= 0.9, 0, 1))
+  sprinkler <- c(sprinkler, sprinkler_values)
+  
+  #join probability condition for Rain
+  rain_values <- ifelse (r[1] <= 0.5, ifelse(r[3] <= 0.8, 0, 1), ifelse(r[3] <= 0.2, 0, 1))
+  rain <- c(rain, rain_values)
+  
+  #join probability condition for Wetgrass
+  wetgrass_values <- ifelse (sprinkler_values == 0 & rain_values == 0, ifelse(r[4] <= 1, 0, 1), 
+                      ifelse (sprinkler_values == 1 & rain_values == 0, ifelse(r[4] <= 0.1, 0, 1),
+                              ifelse (sprinkler_values == 0 & rain_values == 1, ifelse(r[4] <= 0.1, 0, 1),
+                                      ifelse (sprinkler_values == 1 & rain_values == 1, ifelse(r[4] <= 0.01, 0, 1)))))
+  wetgrass <- c(wetgrass, wetgrass_values)
+  
+}
+
+samples <- cbind(cloudy, sprinkler, rain, wetgrass) #biniding all values together
+total_samples <- samples[101:nrow(samples), ]  #ignoring first 100 samples 
+
+P_wetgrass_cloudy <- sum(samples[, "cloudy"] == 1 & samples[, "wetgrass"] == 1) / nrow(total_samples)
+P_sprinkler_rain <- sum(samples[, "sprinkler"] == 1 & samples[, "rain"] == 1) / nrow(total_samples)
+
+print(paste("Probability of wetgrass and cloudy is :",P_wetgrass_cloudy))
+print(paste("Probability of Sprinkler and rain is :",P_sprinkler_rain))
+
+
+
+```
+
+
+
