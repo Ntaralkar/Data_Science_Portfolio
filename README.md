@@ -23,6 +23,8 @@ _
 	- __Python__
 	
 		- [Melbourne Housing](https://github.com/Ntaralkar/Melbourne-Housing/blob/master/Housing%20Analysis.ipynb): BUilt supervised machine learning models to demonstrate which suburbs are best to live in and exploratory analysis that shows various factors that influence your decision of buying a house.
+		
+		- [Twitter US Airline Sentiment Analysis](https://github.com/Ntaralkar/data_science_portfolio/blob/master/Twitter%20US%20Airline%20Sentiment/Twitter_US_Airline_Sentiment_Analysis.ipynb): A sentiment analysis job about the problems of each major U.S. airline. Twitter data scraped from February of 2015 and classified into positive, negative, and neutral tweets, followed by categorizing negative reasons (such as "late flight" or "rude service").
 				
 		
 		
