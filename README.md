@@ -16,17 +16,14 @@ _
 
 
 - ### Natural Language Processing
-	- [3-way Sentiment Analysis for Tweets](https://github.com/sajal2692/data-science-portfolio/blob/master/3-Way%20Sentiment%20Analysis%20for%20Tweets.ipynb): 3-way polarity (positive, negative, neutral) classification system for tweets, without using NLTK's sentiment analysis engine.
-
 	- [Generate Sparse representations using tokenization](https://github.com/Ntaralkar/data_science_portfolio/tree/master/Sentiment%20Analysis):The aim of this task is to build sparse representations for the meeting transcripts generated in task 1, which includes word tokenization, vocabulary generation, and the generation of sparse representations.
 
 
 - ### Data Analysis and Visualisation
 	- __Python__
 	
-		- [Scalable Walkability Analysis of Melbourne](https://github.com/sajal2692/Scalable-Walkability-Analysis-of-Melbourne):
-		
-		
+		- [Melbourne Housing](https://github.com/Ntaralkar/Melbourne-Housing/blob/master/Housing%20Analysis.ipynb): BUilt supervised machine learning models to demonstrate which suburbs are best to live in and exploratory analysis that shows various factors that influence your decision of buying a house.
+				
 		
 		
 	- __R__
